@@ -1,7 +1,7 @@
-folder('devops_project') {
+/*folder('devops_project') {
     displayName('Devops Project App')
     description('Devops Project App')
-}
+}*/
 
 job('devops_project/generate_jobs') {
     displayName("Generate Jobs")
