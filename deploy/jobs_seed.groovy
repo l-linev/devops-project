@@ -26,8 +26,6 @@ def defaultPipelineJob(jobName, displayJobName, jobDescription, jobScriptPath, g
     }
 }
 
-defaultPipelineJob("build_job", "Build job", "Docker image build job", "deploy/build_job.groovy", "l-linev/devops-project")
-
 folder('devops_project') {
     displayName('Devops Project')
     views {
