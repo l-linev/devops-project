@@ -13,7 +13,6 @@ pipeline {
         timeout(time: 30, unit: 'MINUTES')
         parallelsAlwaysFailFast()
         timestamps()
-        ansiColor('xterm')
         buildDiscarder(
             logRotator(
                 daysToKeepStr: '15',
