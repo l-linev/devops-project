@@ -3,6 +3,7 @@ def do_checkout = {
 }
 
 pipeline {
+    agent {'master'}
     parameters {
         booleanParam(name: 'PUSH_DOCKER_IMAGES', defaultValue: false, description: 'Push docker images')
         booleanParam(name: 'TEST_MERGE_COMMIT', defaultValue: false, description: 'Tries merging with origin/master and runs test for that commit.')
