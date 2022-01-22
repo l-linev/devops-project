@@ -6,7 +6,7 @@ folder('devops_project') {
 job('devops_project/generate_jobs') {
     displayName("Generate Jobs")
     parameters {
-    stringParam('GIT_REF', 'master', 'GIT reference, branch, tag or commit')
+    stringParam('GIT_REF', 'main', 'GIT reference, branch, tag or commit')
     }
     scm {
         git {
