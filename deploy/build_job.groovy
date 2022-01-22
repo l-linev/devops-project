@@ -59,30 +59,28 @@ pipeline {
                     }
                 }
             }
-        }
-    }
-    stage('Test images') {
-            when {
-                beforeAgent true
-                expression { params.SKIP_TESTS == false }
-            }
-            stages {
-                stage('Run Lint test') {
-                    steps {
-                        script {
-                            devops_project_image.inside("-u root --name devops_project_lint --memory='1g'") {
-                                sh '''
-                                #!/bin/bash -e
-                                cd /tests
-                                # Lint
-                                python lint_test.py
-                                '''
-                            }
+        }   
+        stages {
+            stage('Run Lint test') {
+                when {
+                    beforeAgent true
+                    expression { params.SKIP_TESTS == false }
+                }
+                steps {
+                    script {
+                        devops_project_image.inside("-u root --name devops_project_lint --memory='1g'") {
+                            sh '''
+                            #!/bin/bash -e
+                            cd /tests
+                            # Lint
+                            python lint_test.py
+                            '''
                         }
                     }
                 }
             }
         }
+    }    
     post {
         success {
             script {
