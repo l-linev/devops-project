@@ -26,7 +26,7 @@ def defaultPipelineJob(jobName, displayJobName, jobDescription, jobScriptPath, g
     }
 }
 
-defaultPipelineJob("reload_jobs", "Reload all jobs", "Reload parameters for all jobs in this folder", "deploy/reload_jobs.groovy", "l-linev/devops-project")
+defaultPipelineJob("build_job", "Reload all jobs", "Reload parameters for all jobs in this folder", "deploy/build_job.groovy", "l-linev/devops-project")
 
 folder('devops_project') {
     displayName('Devops Project')
