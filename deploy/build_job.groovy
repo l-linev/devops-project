@@ -70,6 +70,7 @@ pipeline {
                     devops_project_image.inside("-u root --name devops_project_lint --memory='1g'") {
                         sh '''
                         #!/bin/bash -e
+                        pwd
                         cd /tests
                         # Lint
                         python lint_test.py
