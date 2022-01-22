@@ -26,8 +26,6 @@ pipeline {
         stage('Init') {
             steps {
                 script {
-                    utils.abort_on_refresh_parameters()
-                    utils.exit_on_null_parameters()
                     sh(script: '''
                       set +x
                       aws ecr get-login-password \
