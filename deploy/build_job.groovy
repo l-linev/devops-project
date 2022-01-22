@@ -67,7 +67,7 @@ pipeline {
             }
             steps {
                 script {
-                    devops_project_image.inside("-u root --name devops_project_lint --memory='1g'") {
+                    devops_project_image.inside("-u root -p 9000:9000 --name devops_project_lint --memory='1g'") {
                         sh '''
                         #!/bin/bash -e
                         pwd
