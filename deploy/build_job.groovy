@@ -6,6 +6,7 @@ pipeline {
     agent any
     parameters {
         booleanParam(name: 'PUSH_DOCKER_IMAGES', defaultValue: false, description: 'Push docker images')
+        booleanParam(name: 'SKIP_TESTS', defaultValue: false, description: 'Skip running tests.')
         booleanParam(name: 'TEST_MERGE_COMMIT', defaultValue: false, description: 'Tries merging with origin/master and runs test for that commit.')
         string(name: 'GIT_REF', defaultValue: 'main', description: 'Project repository GIT REF')
         choice(name: 'MODE', choices: ['dev', 'prod', 'beta', 'staging'], description: 'Environment mode')
@@ -60,6 +61,28 @@ pipeline {
             }
         }
     }
+    stage('Test images') {
+            when {
+                beforeAgent true
+                expression { params.SKIP_TESTS == false }
+            }
+            stages {
+                stage('Run Lint test') {
+                    steps {
+                        script {
+                            devops_project_image.inside("-u root --name devops_project_lint --memory='1g'") {
+                                sh '''
+                                #!/bin/bash -e
+                                cd /tests
+                                # Lint
+                                python lint_test.py
+                                '''
+                            }
+                        }
+                    }
+                }
+            }
+        }
     post {
         success {
             script {
