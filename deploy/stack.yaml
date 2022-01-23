@@ -3,7 +3,7 @@ Description: Deploy Devops Project app in ECS/EC2 or AWS Fargate.
 Parameters:
   ClusterName:
     Type: String
-    Default: "dev-cluster"
+    Default: "project-cluster"
     Description: The name of the cluster to add this service to
   ServiceName:
     Type: String
@@ -60,6 +60,13 @@ Resources:
       LogGroupName: !Sub ecs-${ServiceName}-service
       RetentionInDays: 7
 
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties: 
+      CapacityProviders: 
+        - FARGATE
+      ClusterName: !Ref 'ClusterName'
+      
   # The task definition. This is a simple metadata description of what
   # container to run, and what resource requirements it has.
   TaskDefinition:
