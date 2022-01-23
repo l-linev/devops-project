@@ -1,5 +1,3 @@
-@Library('utils') _
-
 pipeline {
     parameters {
         string(name: 'VERSION', description: 'Devops Project version to rollout. Use the explicit version tag of the docker image here')
@@ -24,8 +22,6 @@ pipeline {
         stage('Init') {
             steps {
                 script {
-                    utils.abort_on_refresh_parameters()
-                    utils.exit_on_null_parameters()
                     sh(script: '''
                       set +x
                       aws ecr get-login-password \
