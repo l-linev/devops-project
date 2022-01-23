@@ -62,6 +62,8 @@ Resources:
 
   ECSCluster:
     Type: AWS::ECS::Cluster
+    DependsOn:
+      - ServiceIAMRole
     Properties: 
       CapacityProviders: 
         - FARGATE
