@@ -141,7 +141,6 @@ Resources:
       Protocol: TCP
       HealthCheckIntervalSeconds: 30
       HealthCheckProtocol: TCP
-      HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
       UnhealthyThresholdCount: 5
       TargetType: ip
