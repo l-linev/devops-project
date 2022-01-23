@@ -1,7 +1,6 @@
 pipeline {
     parameters {
         string(name: 'VERSION', description: 'Devops Project version to rollout. Use the explicit version tag of the docker image here')
-        choice(name: 'MODE', choices: ['dev', 'prod', 'beta', 'staging'], description: 'Environment mode')
         string(name: 'GIT_REF', defaultValue: 'main', description: 'Project repository GIT REF')
         choice(name: 'REGION', choices: ['us-east-1'], description: 'Target region.')
     }
@@ -37,22 +36,22 @@ pipeline {
         }
         stage('Deploy Devops Project') {
             steps {
-                echo "Started Devops Project stack deploy for mode: `${params.MODE}`, version: `${params.VERSION}`, region: `${params.REGION}`."
+                echo "Started Devops Project stack deploy for version: `${params.VERSION}`, region: `${params.REGION}`."
                 sh '''
                     #!/bin/bash -xe
                     cd deploy
                     chmod 755 deploy.sh
-                    ./deploy.sh "${MODE}" "${VERSION}"
+                    ./deploy.sh "${VERSION}"
                 '''
             }
         }
     }
     post {
         success {
-            echo "Devops Project deploy finished for mode: `${params.MODE}`, version: `${params.VERSION}`, region: `${params.REGION}`"
+            echo "Devops Project deploy finished for version: `${params.VERSION}`, region: `${params.REGION}`"
         }
         failure {
-            echo  "Devops Project deploy failed for mode: `${params.MODE}`, version: `${params.VERSION}`, region: `${params.REGION}`(<${env.BUILD_URL}|Open>)."
+            echo  "Devops Project deploy failed for version: `${params.VERSION}`, region: `${params.REGION}`(<${env.BUILD_URL}|Open>)."
         }
     }
 }

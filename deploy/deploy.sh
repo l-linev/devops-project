@@ -6,16 +6,15 @@ __raw_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && printf "$(pwd)")"
 pushd "$__raw_dir"
 popd
 
-MODE=${1:-dev}
-VERSION=${2:-latest}
+VERSION=${1:-latest}
 # identifier for custom deployments like PR deployments
 # leave empty for main deployment release
 
 # used to force resource recreation
 HASH=${HASH:-$(date '+%s')}
 
-CLUSTER_NAME="$MODE-cluster"
-SERVICE_NAME="$MODE-devops-project"
+CLUSTER_NAME="project-cluster"
+SERVICE_NAME="devops-project"
 STACK_NAME="ecs-${CLUSTER_NAME}-${SERVICE_NAME}"
 IMAGE="914194858346.dkr.ecr.us-east-1.amazonaws.com/devops_project:$VERSION"
 DESIRED_COUNT=1
@@ -39,7 +38,6 @@ aws cloudformation deploy \
 --stack-name "$STACK_NAME" \
 --parameter-overrides \
     ClusterName="$CLUSTER_NAME" \
-    Mode="$MODE" \
     ServiceName="$SERVICE_NAME" \
     ImageUrl="$IMAGE" \
     LaunchType="$LAUNCH_TYPE" \
@@ -54,7 +52,6 @@ aws cloudformation deploy \
 --tags \
     service_host="ECS" \
     cluster_name="$CLUSTER_NAME" \
-    mode="$MODE" \
     service_name="$SERVICE_NAME" \
 --region "$REGION"
 

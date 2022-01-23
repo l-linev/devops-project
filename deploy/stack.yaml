@@ -5,15 +5,6 @@ Parameters:
     Type: String
     Default: "dev-cluster"
     Description: The name of the cluster to add this service to
-  Mode:
-    Type: String
-    Default: dev
-    AllowedValues:
-      - dev
-      - prod
-      - staging
-      - beta
-    Description: The name of the environment to add this service to
   ServiceName:
     Type: String
     Default: devops-project
@@ -66,7 +57,7 @@ Resources:
   LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Sub ecs-${Mode}-${ServiceName}-service
+      LogGroupName: !Sub ecs-${ServiceName}-service
       RetentionInDays: 7
 
   # The task definition. This is a simple metadata description of what
@@ -94,7 +85,7 @@ Resources:
           LogConfiguration:
             LogDriver: 'awslogs'
             Options:
-              awslogs-group: !Sub ecs-${Mode}-${ServiceName}-service
+              awslogs-group: !Sub ecs-${ServiceName}-service
               awslogs-region: !Ref 'AWS::Region'
               awslogs-stream-prefix: !Sub ${ServiceName}-backend
 
@@ -174,8 +165,8 @@ Resources:
   LoadBalancerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: !Sub ALB Security group for ${Mode} Devops Project App LB
-      GroupName: !Sub SG-${Mode}-devops-project-ALB
+      GroupDescription: ALB Security group for Devops Project App LB
+      GroupName: SG-devops-project-ALB
       SecurityGroupIngress:
         - Description: App port from internet
           FromPort: 9000
@@ -187,8 +178,8 @@ Resources:
   ContainerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: !Sub Security group for ${Mode} Devops Project App
-      GroupName: !Sub SG-${Mode}-devops-project-ECS
+      GroupDescription: Security group for Devops Project App
+      GroupName: SG-devops-project-ECS
       SecurityGroupIngress:
         - SourceSecurityGroupId: !GetAtt LoadBalancerSecurityGroup.GroupId
           Description: All traffic HTTP from LB
