@@ -139,7 +139,7 @@ Resources:
       VpcId: !Ref VPC
       Port: !Ref 'ContainerPortBackend'
       Protocol: TCP
-      HealthCheckIntervalSeconds: 300
+      HealthCheckIntervalSeconds: 30
       HealthCheckProtocol: TCP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
