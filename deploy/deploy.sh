@@ -34,8 +34,6 @@ LAUNCH_TYPE="FARGATE"
 REGION="us-east-1"
 SUBNETS="subnet-07b2188fa854b9572"
 
-ensure_ready_state "$STACK_NAME" "$REGION"
-
 aws cloudformation deploy \
 --template-file "${__raw_dir}/stack.yaml" \
 --stack-name "$STACK_NAME" \
