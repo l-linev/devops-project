@@ -37,7 +37,7 @@ pipeline {
         }
         stage('Deploy Devops Project') {
             steps {
-                slackSend(message: "Started Devops Project stack deploy for mode: `${params.MODE}`, version: `${params.VERSION}`, region: `${params.REGION}`.", failOnError: false)
+                echo "Started Devops Project stack deploy for mode: `${params.MODE}`, version: `${params.VERSION}`, region: `${params.REGION}`."
                 sh '''
                     #!/bin/bash -xe
                     cd deploy
