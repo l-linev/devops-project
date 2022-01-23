@@ -33,8 +33,6 @@ LAUNCH_TYPE="FARGATE"
 REGION="us-east-1"
 SUBNETS="subnet-07b2188fa854b9572,subnet-0e57291b038ff250a"
 
-aws iam create-service-linked-role --aws-service-name ecs.amazonaws.com
-
 aws cloudformation deploy \
 --template-file "${__raw_dir}/stack.yaml" \
 --stack-name "$STACK_NAME" \
