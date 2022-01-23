@@ -74,7 +74,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://914194858346.dkr.ecr.us-east-1.amazonaws.com') {
-                        devops_project_image.withRun("-u root -p 9000:9000 -v /var/lib/jenkins/workspace/devops_project/devops_project/build_job/app:/app -v -v /var/lib/jenkins/workspace/devops_project/devops_project/build_job/tests:/tests --name devops_project_lint --memory='1g'") {
+                        devops_project_image.withRun("-u root -p 9000:9000 -v /var/lib/jenkins/workspace/devops_project/devops_project/build_job/app:/app -v /var/lib/jenkins/workspace/devops_project/devops_project/build_job/tests:/tests --name devops_project_lint --memory='1g'") {
                             sh '''
                             #!/bin/bash -e
                             # Lint
