@@ -37,7 +37,13 @@ pipeline {
                           --password-stdin 914194858346.dkr.ecr.us-east-1.amazonaws.com
                       set -x
                     ''')
+                    sh(script: '''
+                      set +x
+                      pwd
+                      ls -las
+                    ''')
                 }
+                git branch: params.GIT_REF, credentialsId: 'GitHub', url: 'https://github.com/l-linev/devops-project.git'
             }
         }
         stage('Merge master') {
