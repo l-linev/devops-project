@@ -169,7 +169,7 @@ Resources:
             "StatusCode" : 200
       LoadBalancerArn: !Ref LoadBalancer
       Port: 9000
-      Protocol: TCP
+      Protocol: HTTP
 
   LoadBalancerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
