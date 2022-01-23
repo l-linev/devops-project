@@ -32,7 +32,7 @@ MEMORY_BACKEND=512
 
 LAUNCH_TYPE="FARGATE"
 REGION="us-east-1"
-SUBNETS="subnet-07b2188fa854b9572"
+SUBNETS="subnet-07b2188fa854b9572,subnet-0e57291b038ff250a"
 
 aws cloudformation deploy \
 --template-file "${__raw_dir}/stack.yaml" \
