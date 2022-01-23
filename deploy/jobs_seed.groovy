@@ -50,11 +50,18 @@ folder('devops_project') {
     }
 }
 
-
 defaultPipelineJob(
     "devops_project/build_job",
     "Build job",
     "Build new Devops Project docker image",
     "deploy/build_job.groovy",
+    "l-linev/devops-project"
+)
+
+defaultPipelineJob(
+    "devops_project/rollout_stack",
+    "Rollout App with Cloudformation",
+    "Rollout Devops Project to AWS",
+    "deploy/rollout_stack.groovy",
     "l-linev/devops-project"
 )
