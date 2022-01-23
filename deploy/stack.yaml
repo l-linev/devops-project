@@ -156,7 +156,7 @@ Resources:
       SecurityGroups:
         - !GetAtt LoadBalancerSecurityGroup.GroupId
       Subnets: !Ref 'Subnets'
-      Type: application
+      Type: network
 
   ListenerTCP:
     Type: AWS::ElasticLoadBalancingV2::Listener
