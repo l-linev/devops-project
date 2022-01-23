@@ -73,7 +73,8 @@ pipeline {
                         pwd
                         cd /home
                         pwd
-                        cd /tests
+                        ls -las
+                        cd tests
                         # Lint
                         python lint_test.py
                         '''
