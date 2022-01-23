@@ -155,9 +155,9 @@ Resources:
       DefaultActions:
         - Type: fixed-response
           FixedResponseConfig:
-            "ContentType" : text/plain,
-            "MessageBody" : Found,
-            "StatusCode" : 200
+            ContentType: text/plain
+            MessageBody: Found
+            StatusCode: 200
       LoadBalancerArn: !Ref LoadBalancer
       Port: 9000
       Protocol: HTTP
