@@ -77,10 +77,11 @@ pipeline {
                         devops_project_image.inside("-u root -p 9000:9000 -w /project/tests/ --name devops_project_lint --memory='1g'") {
                             sh '''
                             #!/bin/bash -e
+                            cd /project/tests
                             # Lint
                             pwd
                             ls -las
-                            echo "Execute python lint_test.py here"
+                            python lint_test.py
                             '''
                         }
                     }
