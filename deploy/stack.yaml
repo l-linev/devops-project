@@ -162,15 +162,11 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       DefaultActions:
-        - Type: redirect
-          Order: 1
-          RedirectConfig:
-            Host: "#{host}"
-            Path: "/#{path}"
-            Port: "9000"
-            Protocol: TCP
-            Query: "#{query}"
-            StatusCode: HTTP_301
+        - Type: fixed-response
+          FixedResponseConfig:
+            "ContentType" : text/plain,
+            "MessageBody" : Found,
+            "StatusCode" : 200
       LoadBalancerArn: !Ref LoadBalancer
       Port: 9000
       Protocol: TCP
