@@ -1,0 +1,231 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Deploy Devops Project app in ECS/EC2 or AWS Fargate.
+Parameters:
+  ClusterName:
+    Type: String
+    Default: "dev-cluster"
+    Description: The name of the cluster to add this service to
+  Mode:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - prod
+      - staging
+      - beta
+    Description: The name of the environment to add this service to
+  ServiceName:
+    Type: String
+    Default: devops-project
+    Description: A name for the service
+  ImageUrl:
+    Type: String
+    Description: The url of a docker image that contains the application process that
+                 will handle the traffic for this service
+  ContainerPortBackend:
+    Type: Number
+    Default: 9000
+    Description: What port number the application inside the docker container is binding to
+  ContainerCpuTotal:
+    Type: Number
+    Description: How much CPU to give the container. 1024 is 1 CPU
+  ContainerMemoryTotal:
+    Type: Number
+    Description: How much memory in megabytes to give the service
+  ContainerMemoryBackend:
+    Type: Number
+    Description: How much memory in megabytes to give the container
+  DesiredCount:
+    Type: Number
+    Description: How many copies of the service task to run
+  LaunchType:
+    Type: String
+    Description: Launch type, Fargate or EC2.
+    Default: FARGATE
+    AllowedValues:
+      - FARGATE
+      - EC2
+  Subnets:
+      Type: List<AWS::EC2::Subnet::Id>
+  VPC:
+    Type: AWS::EC2::VPC::Id
+    Default: vpc-08e64b7efeafe864a
+  Hash:
+    Type: String
+    Description: Unique string that triggers recreation of web instances if it's changed
+    Default: ""
+  VPNSecurityGroup:
+    Type: String
+    Default: sg-e2973b86
+
+Conditions:
+  IsFargate: !Equals [!Ref 'LaunchType', 'FARGATE']
+  
+Resources:
+  # A log group for storing the stdout logs from this service's containers
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub ecs-${Mode}-${ServiceName}-service
+      RetentionInDays: 7
+
+  # The task definition. This is a simple metadata description of what
+  # container to run, and what resource requirements it has.
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    DependsOn:
+      - LogGroup
+    Properties:
+      Family: !Ref 'ServiceName'
+      Cpu: !Ref 'ContainerCpuTotal'
+      Memory: !Ref 'ContainerMemoryTotal'
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - EC2
+        - FARGATE
+      ExecutionRoleArn: arn:aws:iam::073865013699:role/ecsTaskExecutionRole
+      TaskRoleArn: !GetAtt ServiceIAMRole.Arn
+      ContainerDefinitions:
+        - Name: !Sub ${ServiceName}-backend
+          Image: !Ref 'ImageUrl'
+          Memory: !Ref 'ContainerMemoryBackend'
+          PortMappings:
+            - ContainerPort: !Ref 'ContainerPortBackend'
+          LogConfiguration:
+            LogDriver: 'awslogs'
+            Options:
+              awslogs-group: !Sub ecs-${Mode}-${ServiceName}-service
+              awslogs-region: !Ref 'AWS::Region'
+              awslogs-stream-prefix: !Sub ${ServiceName}-backend
+
+  Service:
+    Type: AWS::ECS::Service
+    DependsOn:
+      - LoadBalancer
+      - ListenerTCP
+    Properties:
+      ServiceName: !Sub ${ServiceName}-${LaunchType}
+      Cluster: !Ref 'ClusterName'
+      LaunchType: !Ref 'LaunchType'
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+        DeploymentCircuitBreaker:
+          Enable: True
+          Rollback: False
+      DeploymentController:
+        Type: ECS
+      DesiredCount: !Ref 'DesiredCount'
+      HealthCheckGracePeriodSeconds: 60
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          SecurityGroups:
+            - !GetAtt ContainerSecurityGroup.GroupId
+          AssignPublicIp:
+            Fn::If:
+              - 'IsFargate'
+              - ENABLED
+              - !Ref "AWS::NoValue"
+          Subnets: !Ref 'Subnets'
+      TaskDefinition: !Ref 'TaskDefinition'
+      LoadBalancers:
+        - ContainerPort: !Ref 'ContainerPortBackend'
+          ContainerName: !Sub ${ServiceName}-backend
+          TargetGroupArn: !Ref 'BackendTargetGroup'
+
+  BackendTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: !Ref VPC
+      Port: !Ref 'ContainerPortBackend'
+      Protocol: TCP
+      HealthCheckIntervalSeconds: 300
+      HealthCheckProtocol: TCP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 5
+      TargetType: ip
+
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      LoadBalancerAttributes:
+        - Key: routing.http2.enabled
+          Value: "true"
+      Name: !Sub ALB-ecs-${ServiceName}
+      Scheme: internet-facing
+      SecurityGroups:
+        - !GetAtt LoadBalancerSecurityGroup.GroupId
+      Subnets: !Ref 'Subnets'
+      Type: application
+
+  ListenerTCP:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: redirect
+          Order: 1
+          RedirectConfig:
+            Host: "#{host}"
+            Path: "/#{path}"
+            Port: "9000"
+            Protocol: TCP
+            Query: "#{query}"
+            StatusCode: HTTP_301
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 9000
+      Protocol: TCP
+
+  LoadBalancerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub ALB Security group for ${Mode} Devops Project App LB
+      GroupName: !Sub SG-${Mode}-devops-project-ALB
+      SecurityGroupIngress:
+        - Description: App port from internet
+          FromPort: 9000
+          IpProtocol: tcp
+          CidrIp: 0.0.0.0/0
+          ToPort: 9000
+      VpcId: !Ref VPC
+
+  ContainerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub Security group for ${Mode} Devops Project App
+      GroupName: !Sub SG-${Mode}-devops-project-ECS
+      SecurityGroupIngress:
+        - SourceSecurityGroupId: !GetAtt LoadBalancerSecurityGroup.GroupId
+          Description: All traffic HTTP from LB
+          IpProtocol: tcp
+          ToPort: 9000
+          FromPort: 9000
+      SecurityGroupEgress:
+        - IpProtocol: "-1"
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VPC
+
+  ServiceIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: Devops Project App ECS Service IAM role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - 'ecs-tasks.amazonaws.com'
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonECS_FullAccess
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+
+Outputs:
+  LoadBalancer:
+    Value: !Ref LoadBalancer
+  LoadBalancerDNS:
+    Value: !GetAtt LoadBalancer.DNSName
