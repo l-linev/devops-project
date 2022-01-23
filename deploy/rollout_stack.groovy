@@ -41,6 +41,7 @@ pipeline {
                 sh '''
                     #!/bin/bash -xe
                     cd deploy
+                    chmod 755 deploy.sh
                     ./deploy.sh "${MODE}" "${VERSION}"
                 '''
             }
