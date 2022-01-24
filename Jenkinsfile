@@ -50,7 +50,6 @@ pipeline {
                         cancelPreviousBuilds()
                         env.commit_to_test = env.CHANGE_BRANCH
                         env.VERSION = "pr-${env.CHANGE_ID}"
-                        }
                     } else {
                         //CI-CD is triggered by a push to main branch. 
                         env.commit_to_test = env.GIT_COMMIT
