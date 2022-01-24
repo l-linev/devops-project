@@ -38,7 +38,6 @@ pipeline {
         stage('Init') {
             steps {
                 script {
-                    discoverGitReferenceBuild()
                     echo "GIT_COMMIT: ${env.GIT_COMMIT}"
                     env.GIT_COMMIT_NEW = sh returnStdout: true, script: "git log -n 1 --pretty=format:'%H' --invert-grep --author=Jenkins"
                     echo "GIT_COMMIT_NEW: ${env.GIT_COMMIT_NEW}"
