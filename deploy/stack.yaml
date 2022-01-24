@@ -161,7 +161,7 @@ Resources:
         - Type: forward
           ForwardConfig:
              TargetGroups: 
-                - TargetGroupArn: !GetAtt BackendTargetGroup.Arn
+                - TargetGroupArn: !Ref BackendTargetGroup
       LoadBalancerArn: !Ref LoadBalancer
       Port: 9000
       Protocol: TCP
