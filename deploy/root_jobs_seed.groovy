@@ -39,7 +39,7 @@ multibranchPipelineJob('devops_project/ci-cd') {
             buildOriginBranchWithPR(false)
             buildOriginPRHead(false)
             buildOriginPRMerge(true)
-            scanCredentialsId('GitHub')
+            scanCredentialsId('Jenkins')
             repoOwner('l-linev')
             repository('devops-project')
         }
