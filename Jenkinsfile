@@ -46,7 +46,7 @@ pipeline {
                     echo "CHANGE_ID: ${env.CHANGE_ID}"
                     echo "CHANGE_TARGET: ${env.CHANGE_TARGET}"
                     if (env.CHANGE_BRANCH) {
-                        //CI-CD is triggered by a push to a PR hence the pr_ prefix
+                        //CI-CD is triggered by a push to a PR hence the pr_ prefix 
                         cancelPreviousBuilds()
                         env.commit_to_test = env.CHANGE_BRANCH
                         env.VERSION = "pr-${env.CHANGE_ID}"
