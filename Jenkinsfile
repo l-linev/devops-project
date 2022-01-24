@@ -51,7 +51,7 @@ pipeline {
                         env.commit_to_test = env.CHANGE_BRANCH
                         env.VERSION = "pr-${env.CHANGE_ID}"
                         env.VERSION = "pr-${env.BUILD_ID}"
-                        withCredentials([string(credentialsId: 'GitHub', variable: 'GITHUB_TOKEN')]) {
+                        withCredentials([string(credentialsId: 'GitHubToken', variable: 'GITHUB_TOKEN')]) {
                             echo 'Checking if PR label matches the one for deploy'
                             env.DEPLOY_LABEL = sh(script: '''#!/bin/bash
                             curl -s --fail -XGET -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/l-linev/devops-project/pulls/$CHANGE_ID" | jq -r '[.labels[] | select(.name=="deploy")] | length'
@@ -117,7 +117,7 @@ pipeline {
                         ], wait: true, propagate: true)
                     echo "Devops Project App rollout_stack job id ${rolloutjobResult.number} deploying to ECS finished with ${rolloutjobResult.result}."
                     if (env.CHANGE_BRANCH) {
-                        withCredentials([string(credentialsId: 'GitHub', variable: 'GITHUB_TOKEN')]) {
+                        withCredentials([string(credentialsId: 'GitHubToken', variable: 'GITHUB_TOKEN')]) {
                             sh '''curl -s -S --fail -XPOST -H "Authorization: token $GITHUB_TOKEN" -d ''' + """'{\"state\": \"success\",  \"description\": \"Deployed to ECS!\", \"context\": \"continuous-integration/jenkins/ecs\"}'""" + ''' "https://api.github.com/repos/l-linev/devops-project/statuses/$GIT_COMMIT_NEW" > /dev/null'''      
                         }
                     }
