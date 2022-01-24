@@ -55,9 +55,5 @@ aws cloudformation deploy \
     service_name="$SERVICE_NAME" \
 --region "$REGION"
 
-if [[ $(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION" | jq -r '.Stacks[0].StackStatus') =~ UPDATE_COMPLETE|CREATE_COMPLETE ]]; then
-    cleanup_failed_change_sets "${STACK_NAME}" "${REGION}"
-    exit 0
-fi
 aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION"
 exit 1
