@@ -104,7 +104,7 @@ Resources:
       - LoadBalancer
       - ListenerTCP
     Properties:
-      ServiceName: !Sub ${ServiceName}-${LaunchType}
+      ServiceName: !Sub ${ServiceName}-service-${LaunchType}
       Cluster: !Ref 'ClusterName'
       LaunchType: !Ref 'LaunchType'
       DeploymentConfiguration:

@@ -46,26 +46,18 @@ pipeline {
                     echo "CHANGE_BRANCH: ${env.CHANGE_BRANCH}"
                     echo "CHANGE_ID: ${env.CHANGE_ID}"
                     echo "CHANGE_TARGET: ${env.CHANGE_TARGET}"
-                    if (env.GIT_BRANCH != 'main') {
-                        //branch is not main
+                    if (env.CHANGE_BRANCH) {
+                        //CI-CD is triggered by a push to a PR hence the pr_ prefix
                         cancelPreviousBuilds()
-                        if (env.CHANGE_BRANCH) {
-                            //CI-CD is triggered by a push to a PR hence the pr_ prefix
-                            env.commit_to_test = env.CHANGE_BRANCH
-                            env.VERSION = "pr-${env.CHANGE_ID}"
-                            withCredentials([string(credentialsId: 'GitHub', variable: 'GITHUB_TOKEN')]) {
-                                echo 'Checking if PR label matches the one for deploy'
-                                env.DEPLOY_LABEL = sh(script: '''#!/bin/bash
-                                curl -s --fail -XGET -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/l-linev/devops-project/pulls/$CHANGE_ID" | jq -r '[.labels[] | select(.name=="deploy")] | length'
-                                ''', returnStdout: true).trim()
-                            }
-                        } else {
-                            //CI-CD is triggered by a push to a branch(different than main). Has to be enabled by the multiBranch job include filter
-                            env.VERSION = "br-${env.BUILD_ID}"
-                            env.commit_to_test = env.GIT_COMMIT
-                            env.DEPLOY_LABEL = '0'
-                        }
+                        env.commit_to_test = env.CHANGE_BRANCH
+                        env.VERSION = "pr-${env.CHANGE_ID}"
                         env.VERSION = "pr-${env.BUILD_ID}"
+                        withCredentials([string(credentialsId: 'GitHub', variable: 'GITHUB_TOKEN')]) {
+                            echo 'Checking if PR label matches the one for deploy'
+                            env.DEPLOY_LABEL = sh(script: '''#!/bin/bash
+                            curl -s --fail -XGET -H "Authorization: token $GITHUB_TOKEN" "https://api.github.com/repos/l-linev/devops-project/pulls/$CHANGE_ID" | jq -r '[.labels[] | select(.name=="deploy")] | length'
+                            ''', returnStdout: true).trim()
+                        }
                     } else {
                         //CI-CD is triggered by a push to main branch. 
                         env.DEPLOY_LABEL = '1'
