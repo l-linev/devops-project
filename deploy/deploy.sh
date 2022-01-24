@@ -56,4 +56,4 @@ aws cloudformation deploy \
 --region "$REGION"
 
 aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$REGION"
-exit 1
+exit 0
