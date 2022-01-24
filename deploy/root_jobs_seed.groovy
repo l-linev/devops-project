@@ -12,7 +12,7 @@ job('devops_project/generate_jobs') {
         git {
             remote {
                 github('l-linev/devops-project')
-                credentials('GitHub')
+                credentials('GitHubToken')
             }
             branch('$GIT_REF')
         }
@@ -39,7 +39,7 @@ multibranchPipelineJob('devops_project/ci-cd') {
             buildOriginBranchWithPR(false)
             buildOriginPRHead(false)
             buildOriginPRMerge(true)
-            scanCredentialsId('GitHub') //GitHub credentials
+            scanCredentialsId('GitHubToken') //GitHub credentials
             repoOwner('l-linev')
             repository('devops-project')
         }

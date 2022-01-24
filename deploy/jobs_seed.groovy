@@ -12,7 +12,7 @@ def defaultPipelineJob(jobName, displayJobName, jobDescription, jobScriptPath, g
                     git {
                         remote {
                             github(gitRepo)
-                            credentials('GitHub')
+                            credentials('GitHubToken')
                         }
                         branch('$GIT_REF')
                         extensions {

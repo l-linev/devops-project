@@ -31,7 +31,7 @@ pipeline {
                       set -x
                     ''')
                 }
-                git branch: params.GIT_REF, credentialsId: 'GitHub', url: 'https://github.com/l-linev/devops-project.git'
+                git branch: params.GIT_REF, credentialsId: 'GitHubToken', url: 'https://github.com/l-linev/devops-project.git'
             }
         }
         stage('Deploy Devops Project') {

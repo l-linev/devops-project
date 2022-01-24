@@ -1,5 +1,5 @@
 def do_checkout = {
-    checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: params.GIT_REF]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout'], [$class: 'CleanCheckout'], [$class: 'PreBuildMerge', options: [mergeRemote: 'origin', mergeTarget: 'main']]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GitHub', url: env.GIT_URL]]]
+    checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: params.GIT_REF]], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CleanBeforeCheckout'], [$class: 'CleanCheckout'], [$class: 'PreBuildMerge', options: [mergeRemote: 'origin', mergeTarget: 'main']]], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'GitHubToken', url: env.GIT_URL]]]
 }
 
 pipeline {
@@ -42,7 +42,7 @@ pipeline {
                       ls -las
                     ''')
                 }
-                git branch: params.GIT_REF, credentialsId: 'GitHub', url: 'https://github.com/l-linev/devops-project.git'
+                git branch: params.GIT_REF, credentialsId: 'GitHubToken', url: 'https://github.com/l-linev/devops-project.git'
             }
         }
         stage('Merge master') {
