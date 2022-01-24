@@ -63,7 +63,7 @@ pipeline {
         stage('Build, test and push') {
             steps {
                 script {
-                    def buildjobResult = build(job: 'devops_project/build_job', parameters: [
+                    def buildjobResult = build(job: 'devops_project/devops_project/build_job', parameters: [
                         string(name: 'GIT_REF', value: env.commit_to_test),
                         string(name: 'VERSION', value: env.VERSION),
                         booleanParam(name: 'PUSH_DOCKER_IMAGES', value: true),
@@ -78,7 +78,7 @@ pipeline {
         stage('Rollout Devops Project App') {
             steps {
                 script {
-                    def rolloutjobResult = build(job: 'devops_project/rollout_stack', parameters: [
+                    def rolloutjobResult = build(job: 'devops_project/devops_project/rollout_stack', parameters: [
                         string(name: 'GIT_REF', value: "${env.commit_to_test}"),
                         string(name: 'VERSION', value: env.VERSION)
                         ], wait: true, propagate: true)
