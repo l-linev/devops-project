@@ -42,8 +42,6 @@ folder('devops_project') {
                 lastSuccess()
                 lastFailure()
                 lastDuration()
-                userName()
-                buildParameters("VERSION")
                 buildButton()
             }
         }
