@@ -155,13 +155,13 @@ Resources:
 
   ListenerTCP:
     Type: AWS::ElasticLoadBalancingV2::Listener
+    DependsOn: BackendTargetGroup
     Properties:
       DefaultActions:
-        - Type: fixed-response
-          FixedResponseConfig:
-            ContentType: text/plain
-            MessageBody: Found
-            StatusCode: 200
+        - Type: forward
+          ForwardConfig:
+             TargetGroups: 
+                - TargetGroupArn: !GetAtt BackendTargetGroup.Arn
       LoadBalancerArn: !Ref LoadBalancer
       Port: 9000
       Protocol: TCP
